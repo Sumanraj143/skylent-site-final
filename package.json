@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "jose": "^6.2.10",
     "lucide-react": "latest",
     "mongodb": "^7.5.0",
     "next": "latest",

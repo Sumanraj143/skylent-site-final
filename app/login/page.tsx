@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -14,6 +14,17 @@ import Link from "next/link";
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const verified = params.get("verified");
+    const google = params.get("google");
+    if (verified === "success") setError("Email verified. You can now sign in.");
+    if (verified === "invalid") setError("This verification link is invalid or expired.");
+    if (google === "not-configured") setError("Google sign-in is not configured yet.");
+    if (google === "failed" || google === "invalid") setError("Google sign-in could not be completed.");
+  }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -24,6 +35,7 @@ export default function LoginPage() {
 
     const email = String(formData.get("email") || "");
     const password = String(formData.get("password") || "");
+    setError("");
 
     try {
       const response = await fetch("/api/users/login", {
@@ -40,13 +52,13 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        alert(data.message || "Invalid email or password.");
+        setError(data.message || "Invalid email or password.");
         return;
       }
 
       window.location.href = "/";
     } catch {
-      alert("Something went wrong. Please try again.");
+      setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -160,14 +172,28 @@ export default function LoginPage() {
             </button>
           </form>
 
+          {error && (
+            <div className="auth-message" role="alert">
+              <span>{error}</span>
+              {error === "Account not found. Please create an account." && (
+                <Link href="/signup">Create Account</Link>
+              )}
+            </div>
+          )}
+
+          <div className="auth-divider"><span /><small>OR</small><span /></div>
+
+          <a href="/api/auth/google" className="auth-google-button">
+            <span className="google-mark" aria-hidden="true">G</span>
+            Continue with Google
+          </a>
+
           <div className="auth-divider">
-            <span />
-            <small>NEW TO SKYLENT?</small>
-            <span />
+            <span /><small>NEW TO SKYLENT?</small><span />
           </div>
 
           <Link href="/signup" className="auth-login-link">
-            Create your SKYLENT account
+            Don't have an account? Create account
             <ArrowUpRight size={16} />
           </Link>
 

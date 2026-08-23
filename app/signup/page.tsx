@@ -17,6 +17,7 @@ import Link from "next/link";
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -28,6 +29,20 @@ export default function SignupPage() {
     const name = String(formData.get("name") || "");
     const email = String(formData.get("email") || "");
     const password = String(formData.get("password") || "");
+    const confirmation = String(formData.get("confirmation") || "");
+    setMessage("");
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim().toLowerCase())) {
+      setMessage("Please enter a valid email address.");
+      setLoading(false);
+      return;
+    }
+
+    if (password !== confirmation) {
+      setMessage("Passwords do not match.");
+      setLoading(false);
+      return;
+    }
 
     try {
       const response = await fetch("/api/users", {
@@ -45,13 +60,13 @@ export default function SignupPage() {
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        alert(data.message || "Unable to create account.");
+        setMessage(data.message || "Unable to create account.");
         return;
       }
 
-      window.location.href = "/login";
+      setMessage(data.message);
     } catch {
-      alert("Something went wrong. Please try again.");
+      setMessage("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -170,6 +185,22 @@ export default function SignupPage() {
               </div>
             </label>
 
+            <label>
+              <span>Confirm password</span>
+
+              <div className="auth-input">
+                <LockKeyhole size={18} />
+                <input
+                  name="confirmation"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Repeat your password"
+                  required
+                  minLength={6}
+                  autoComplete="new-password"
+                />
+              </div>
+            </label>
+
             <div className="auth-security">
               <CheckCircle2 size={15} />
               <span>Your password is securely encrypted before storage.</span>
@@ -185,6 +216,15 @@ export default function SignupPage() {
               {!loading && <ArrowUpRight size={17} />}
             </button>
           </form>
+
+          {message && <div className="auth-message" role="alert">{message}</div>}
+
+          <div className="auth-divider"><span /><small>OR</small><span /></div>
+
+          <a href="/api/auth/google" className="auth-google-button">
+            <span className="google-mark" aria-hidden="true">G</span>
+            Continue with Google
+          </a>
 
           <div className="auth-divider">
             <span />

@@ -1743,6 +1743,56 @@ a {
   cursor: not-allowed;
 }
 
+.auth-message {
+  margin-top: 14px;
+  padding: 11px 13px;
+  border: 1px solid rgba(251, 191, 36, 0.25);
+  border-radius: 12px;
+  background: rgba(251, 191, 36, 0.06);
+  color: #fde68a;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.auth-message a {
+  display: inline-block;
+  margin-left: 6px;
+  color: #67e8f9;
+  font-weight: 800;
+  text-decoration: underline;
+}
+
+.auth-google-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 50px;
+  margin-top: 17px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #f7f8ff;
+  font-size: 13px;
+  font-weight: 800;
+  transition: 0.25s ease;
+}
+
+.google-mark {
+  margin-right: 8px;
+  color: #4285f4;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.auth-google-button:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+}
+
 /* DIVIDER */
 
 .auth-divider {

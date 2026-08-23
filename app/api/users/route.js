@@ -1,17 +1,31 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import clientPromise from "@/lib/mongodb";
+import {
+  createVerificationToken,
+  isValidEmail,
+  normalizeEmail,
+  sendVerificationEmail,
+} from "@/lib/auth";
 
 export async function POST(request) {
   try {
     const { name, email, password } = await request.json();
+    const normalizedEmail = normalizeEmail(email);
 
-    if (!name || !email || !password) {
+    if (!name?.trim() || !normalizedEmail || !password) {
       return NextResponse.json(
         {
           success: false,
           message: "Name, email and password are required",
         },
+        { status: 400 }
+      );
+    }
+
+    if (!isValidEmail(normalizedEmail)) {
+      return NextResponse.json(
+        { success: false, message: "Please enter a valid email address." },
         { status: 400 }
       );
     }
@@ -30,7 +44,7 @@ export async function POST(request) {
     const db = client.db("skylent");
 
     const existingUser = await db.collection("users").findOne({
-      email: email.toLowerCase(),
+      email: normalizedEmail,
     });
 
     if (existingUser) {
@@ -43,18 +57,37 @@ export async function POST(request) {
       );
     }
 
+    if (!process.env.RESEND_API_KEY || !process.env.EMAIL_FROM) {
+      return NextResponse.json(
+        { success: false, message: "Email verification is not configured yet." },
+        { status: 503 }
+      );
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
+    const verification = createVerificationToken();
 
     const result = await db.collection("users").insertOne({
-      name,
-      email: email.toLowerCase(),
+      name: name.trim(),
+      email: normalizedEmail,
       password: hashedPassword,
+      emailVerified: false,
+      emailVerificationTokenHash: verification.tokenHash,
+      emailVerificationExpiresAt: verification.expiresAt,
+      authProvider: "password",
       createdAt: new Date(),
     });
 
+    try {
+      await sendVerificationEmail({ email: normalizedEmail, token: verification.token });
+    } catch (error) {
+      await db.collection("users").deleteOne({ _id: result.insertedId });
+      throw error;
+    }
+
     const response = NextResponse.json({
       success: true,
-      message: "User created successfully 🚀",
+      message: "Account created. Check your email to verify your account.",
       userId: result.insertedId.toString(),
     });
 
