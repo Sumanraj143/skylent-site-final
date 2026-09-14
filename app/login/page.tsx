@@ -160,6 +160,11 @@ export default function LoginPage() {
                 </button>
               </div>
             </label>
+                        <div className="forgot-password-row">
+              <Link href="/forgot-password">
+                Forgot password?
+              </Link>
+            </div>
 
             <button
               type="submit"
