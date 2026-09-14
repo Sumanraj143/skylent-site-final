@@ -217,26 +217,61 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="youtube" className="section-wrap youtube-section">
-        <div className="youtube-glow" />
-        <div className="youtube-layout">
-          <div className="youtube-copy reveal">
-            <div className="eyebrow eyebrow-red"><PlayCircle size={15} /> SKYLENT on YouTube</div>
-            <h2>Learn. <span>Build.</span><br /><strong>Keep moving forward.</strong></h2>
-            <p>Practical technology, AI projects, workshops, career guidance and motivation — presented in a way the next generation can actually enjoy.</p>
-            <div className="coming-button"><PlayCircle size={17} /> YouTube Channel · Coming Soon</div>
-          </div>
+<section id="youtube" className="section-wrap youtube-section">
+  <div className="youtube-glow" />
 
-          <div className="youtube-card reveal delay-1">
-            <div className="youtube-card-glow" />
-            <img src="/branding/skylent-youtube.png" alt="SKYLENT YouTube" />
-            <div className="youtube-card-kicker">COMING SOON</div>
-            <h3>The SKYLENT Channel</h3>
-            <p>Projects, AI, workshops, careers and motivation — all from the SKYLENT journey.</p>
-            <div className="youtube-tags"><span>AI</span><span>Projects</span><span>Careers</span><span>Motivation</span></div>
-          </div>
-        </div>
-      </section>
+  <div className="youtube-layout">
+    <div className="youtube-copy reveal">
+      <div className="eyebrow eyebrow-red">
+        <PlayCircle size={15} /> SKYLENT on YouTube
+      </div>
+
+      <h2>
+        Learn. <span>Build.</span><br />
+        <strong>Keep moving forward.</strong>
+      </h2>
+
+      <p>
+        Practical technology, AI projects, workshops, career guidance and
+        motivation — presented in a way the next generation can actually enjoy.
+      </p>
+
+      <a
+        href="https://www.youtube.com/@skylentofficial"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="coming-button"
+      >
+        <PlayCircle size={17} /> Visit SKYLENT on YouTube
+      </a>
+    </div>
+
+    <div className="youtube-card reveal delay-1">
+      <div className="youtube-card-glow" />
+
+      <img
+        src="/branding/skylent-youtube.png"
+        alt="SKYLENT YouTube"
+      />
+
+      <div className="youtube-card-kicker">NOW LIVE</div>
+
+      <h3>The SKYLENT Channel</h3>
+
+      <p>
+        Projects, AI, workshops, careers and motivation — all from the SKYLENT
+        journey.
+      </p>
+
+      <div className="youtube-tags">
+        <span>AI</span>
+        <span>Projects</span>
+        <span>Careers</span>
+        <span>Motivation</span>
+      </div>
+    </div>
+  </div>
+</section>
 
       <section id="beginning" className="section-wrap beginning-section">
         <div className="beginning-card reveal">
