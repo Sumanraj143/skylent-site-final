@@ -271,7 +271,7 @@ a {
   align-items: center;
   gap: 12px;
   margin-top: 40px;
-  color: #536078;
+  color: #7f8aa0;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: .32em;
@@ -350,7 +350,7 @@ a {
   border-radius: 15px;
   background: rgba(3, 5, 11, .72);
   backdrop-filter: blur(12px);
-  color: #667187;
+  color: #939db0;
   font-size: 8px;
   letter-spacing: .2em;
 }
@@ -386,7 +386,7 @@ a {
 
 .hero-caption {
   margin-top: 17px;
-  color: #45516a;
+  color: #7f8aa0;
   font-size: 9px;
   letter-spacing: .34em;
 }
@@ -408,13 +408,13 @@ a {
 }
 
 .section-heading h2 span {
-  color: #7d879b;
+  color: #8f99ad;
 }
 
 .section-heading p {
   margin-top: 22px;
   max-width: 660px;
-  color: #7f8a9e;
+  color: #9aa4b8;
   font-size: 16px;
   line-height: 1.8;
 }
@@ -470,7 +470,7 @@ a {
 .card-top {
   display: flex;
   justify-content: space-between;
-  color: #59647a;
+  color: #7f8aa0;
 }
 
 .card-top svg {
@@ -492,7 +492,7 @@ a {
 
 .pillar-card p {
   margin-top: 10px;
-  color: #778297;
+  color: #97a1b4;
   line-height: 1.75;
   font-size: 14px;
 }
@@ -585,7 +585,7 @@ a {
 .project-main p {
   max-width: 600px;
   margin-top: 14px;
-  color: #7f8a9e;
+  color: #9aa4b8;
   line-height: 1.8;
 }
 
@@ -646,7 +646,7 @@ a {
 .flow-item span {
   display: block;
   margin-top: 4px;
-  color: #68748a;
+  color: #939db0;
   font-size: 11px;
   line-height: 1.45
 }
@@ -706,9 +706,9 @@ a {
 .workshop-unit {
   margin-top: 6px;
   color: #f59e0b;
-  font-size: 9px;
+  font-size: 14px;
   font-weight: 800;
-  letter-spacing: .25em
+  letter-spacing: .04em
 }
 
 .workshop-card h3 {
@@ -719,7 +719,7 @@ a {
 
 .workshop-card p {
   margin-top: 10px;
-  color: #7f8a9e;
+  color: #9aa4b8;
   line-height: 1.75
 }
 
@@ -759,7 +759,7 @@ a {
 }
 
 .workshop-item span {
-  color: #6b7280;
+  color: #939db0;
   font-size: 9px;
   letter-spacing: .14em
 }
@@ -780,6 +780,7 @@ a {
 }
 
 .resource-card {
+  display: block;
   position: relative;
   min-height: 255px;
   padding: 24px;
@@ -810,7 +811,7 @@ a {
   position: absolute;
   right: 20px;
   top: 22px;
-  color: #414b60;
+  color: #7a859a;
   font-size: 10px;
   letter-spacing: .15em
 }
@@ -822,7 +823,7 @@ a {
 
 .resource-card p {
   margin-top: 9px;
-  color: #747f93;
+  color: #97a1b4;
   line-height: 1.65;
   font-size: 13px
 }
@@ -831,7 +832,7 @@ a {
   position: absolute;
   right: 20px;
   bottom: 20px;
-  color: #64748b
+  color: #939db0
 }
 
 .resource-2 .resource-icon {
@@ -893,7 +894,7 @@ a {
 .youtube-copy p {
   max-width: 620px;
   margin-top: 23px;
-  color: #7f8a9e;
+  color: #9aa4b8;
   line-height: 1.8
 }
 
@@ -960,7 +961,7 @@ a {
 .youtube-card p {
   position: relative;
   margin-top: 10px;
-  color: #7f8a9e;
+  color: #9aa4b8;
   line-height: 1.7;
   font-size: 13px
 }
@@ -1076,7 +1077,7 @@ a {
 
 .footer-inner p {
   margin-top: 8px;
-  color: #566176;
+  color: #7f8aa0;
   font-size: 11px;
   letter-spacing: .04em
 }
@@ -1086,14 +1087,14 @@ a {
   flex-direction: column;
   align-items: flex-end;
   gap: 12px;
-  color: #4f5b70;
+  color: #7f8aa0;
   font-size: 11px
 }
 
 .footer-links {
   display: flex;
   gap: 20px;
-  color: #717c90
+  color: #97a1b4
 }
 
 .footer-links a:hover {
@@ -1376,7 +1377,7 @@ a {
   align-items: center;
   gap: 7px;
 
-  color: #78849a;
+  color: #97a1b4;
   font-size: 12px;
   font-weight: 700;
 
@@ -1564,7 +1565,7 @@ a {
 
   text-align: center;
 
-  color: #7f8a9e;
+  color: #9aa4b8;
 
   font-size: 13px;
 
@@ -1621,7 +1622,7 @@ a {
 .auth-input>svg {
   flex-shrink: 0;
 
-  color: #566277;
+  color: #7f8aa0;
 }
 
 .auth-input:focus-within {
@@ -1651,7 +1652,7 @@ a {
 }
 
 .auth-input input::placeholder {
-  color: #4d586d;
+  color: #7f8aa0;
 }
 
 .password-toggle {
@@ -1666,7 +1667,7 @@ a {
 
   background: transparent;
 
-  color: #566277;
+  color: #7f8aa0;
 
   cursor: pointer;
 
@@ -1687,7 +1688,7 @@ a {
 
   margin-top: -2px;
 
-  color: #566277;
+  color: #7f8aa0;
 
   font-size: 10px;
 }
@@ -1813,7 +1814,7 @@ a {
 }
 
 .auth-divider small {
-  color: #4f5b70;
+  color: #7f8aa0;
 
   font-size: 8px;
   font-weight: 800;
@@ -1857,7 +1858,7 @@ a {
 
   margin-top: 30px;
 
-  color: #394356;
+  color: #7a859a;
 
   font-size: 8px;
   font-weight: 900;
@@ -1885,7 +1886,7 @@ a {
 
   text-align: center;
 
-  color: #3f4a5e;
+  color: #7a859a;
 
   font-size: 9px;
 

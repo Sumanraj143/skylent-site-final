@@ -22,6 +22,7 @@ export default function LoginPage() {
     const google = params.get("google");
     if (verified === "success") setError("Email verified. You can now sign in.");
     if (verified === "invalid") setError("This verification link is invalid or expired.");
+    if (verified === "error") setError("We couldn't verify your email right now. Please try again.");
     if (google === "not-configured") setError("Google sign-in is not configured yet.");
     if (google === "failed" || google === "invalid") setError("Google sign-in could not be completed.");
   }, []);
@@ -52,11 +53,11 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        setError(data.message || "Invalid email or password.");
+        setError(data.message || "Email or password is incorrect.");
         return;
       }
 
-      window.location.href = "/";
+      window.location.href = data.redirect || "/";
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -106,9 +107,8 @@ export default function LoginPage() {
           </h1>
 
           <p className="auth-description">
-            Sign in and continue building your future with
-            practical AI, real-world projects and
-            career-ready skills.
+            Workshop students: sign in with the email and
+            password SKYLENT gave you, or with Google.
           </p>
 
           <form onSubmit={handleSubmit} className="auth-form">
@@ -180,9 +180,6 @@ export default function LoginPage() {
           {error && (
             <div className="auth-message" role="alert">
               <span>{error}</span>
-              {error === "Account not found. Please create an account." && (
-                <Link href="/signup">Create Account</Link>
-              )}
             </div>
           )}
 

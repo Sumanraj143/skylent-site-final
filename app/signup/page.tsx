@@ -65,6 +65,8 @@ export default function SignupPage() {
       }
 
       setMessage(data.message);
+      form.reset();
+      setTimeout(() => (window.location.href = "/login"), 2500);
     } catch {
       setMessage("Something went wrong. Please try again.");
     } finally {
@@ -160,9 +162,9 @@ export default function SignupPage() {
                 <input
                   name="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="Create a password"
+                  placeholder="At least 8 characters"
                   required
-                  minLength={6}
+                  minLength={8}
                   autoComplete="new-password"
                 />
 
@@ -195,7 +197,7 @@ export default function SignupPage() {
                   type={showPassword ? "text" : "password"}
                   placeholder="Repeat your password"
                   required
-                  minLength={6}
+                  minLength={8}
                   autoComplete="new-password"
                 />
               </div>
@@ -203,7 +205,7 @@ export default function SignupPage() {
 
             <div className="auth-security">
               <CheckCircle2 size={15} />
-              <span>Your password is securely encrypted before storage.</span>
+              <span>Your password is hashed before it is stored — no one can read it, not even SKYLENT.</span>
             </div>
 
             <button

@@ -30,8 +30,8 @@ function ResetPasswordForm() {
             return;
         }
 
-        if (password.length < 6) {
-            setError("Password must be at least 6 characters.");
+        if (password.length < 8) {
+            setError("Password must be at least 8 characters.");
             return;
         }
 
@@ -134,7 +134,7 @@ function ResetPasswordForm() {
                                     onChange={(event) => setPassword(event.target.value)}
                                     placeholder="Enter your new password"
                                     required
-                                    minLength={6}
+                                    minLength={8}
                                     autoComplete="new-password"
                                 />
                             </div>
@@ -154,7 +154,7 @@ function ResetPasswordForm() {
                                     }
                                     placeholder="Confirm your new password"
                                     required
-                                    minLength={6}
+                                    minLength={8}
                                     autoComplete="new-password"
                                 />
                             </div>
