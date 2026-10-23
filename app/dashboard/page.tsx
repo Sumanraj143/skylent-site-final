@@ -5,7 +5,7 @@ import PanelShell from "@/components/PanelShell";
 import SubmitButton from "@/components/SubmitButton";
 import { setVideoConsent } from "../account/actions";
 import { requireUser } from "@/lib/session";
-import { collections, getPlan } from "@/lib/data";
+import { collections, formatBytes, getPlan } from "@/lib/data";
 import { studentAccess } from "@/lib/workshop";
 import { SOCIAL } from "@/lib/site";
 
@@ -102,9 +102,33 @@ export default async function StudentDashboard() {
 
       <section className="p-card s-project">
         <h2>Your AI agent project</h2>
+        {access.canSeeProject && user.fileId && (
+          <div className="s-file">
+            <div>
+              <strong>{user.fileName || "project.zip"}</strong>
+              <span className="p-sub">{formatBytes(user.fileSize)} · your own project code</span>
+            </div>
+            <a href={`/api/files/${user.fileId}`} className="p-btn p-btn-primary"><Download size={16} /> Download your code</a>
+          </div>
+        )}
+        {access.canSeeProject && user.fileId && (
+          <div>
+            <h4 className="s-h4">How to run it</h4>
+            <ol className="s-steps s-run">
+              <li><strong>Download</strong> the zip with the button above.</li>
+              <li><strong>Extract</strong> it: right-click the zip → <em>Extract All</em> (Windows) or double-click it (Mac / Linux).</li>
+              <li><strong>Open</strong> the extracted folder in VS Code (File → Open Folder).</li>
+              <li><strong>Open a terminal</strong> in VS Code (Terminal → New Terminal).</li>
+              <li><strong>Install</strong> the packages: <code>npm install</code> for Node projects, or <code>pip install -r requirements.txt</code> for Python.</li>
+              <li><strong>Add your keys:</strong> copy <code>.env.example</code> to <code>.env</code> and fill it in, if the project has one.</li>
+              <li><strong>Run</strong> it using the steps below or the project’s README.</li>
+            </ol>
+          </div>
+        )}
         {!access.canSeeProject ? (
           <p className="s-muted"><Lock size={14} /> Your own project opens on Day 3.</p>
         ) : !project ? (
+          user.fileId ? null : 
           <p className="s-muted">Your project is being assigned. Check back in a few minutes.</p>
         ) : (
           <>
@@ -120,7 +144,7 @@ export default async function StudentDashboard() {
               </div>
               <div className="s-project-actions">
                 {project.zipUrl && (
-                  <a href={`/api/projects/${project._id}/download`} className="p-btn p-btn-primary"><Download size={16} /> Download project</a>
+                  <a href={`/api/projects/${project._id}/download`} className="p-btn p-btn-ghost"><Download size={16} /> Starter code</a>
                 )}
                 {project.docsUrl && <a href={project.docsUrl} target="_blank" rel="noopener noreferrer" className="p-btn p-btn-ghost"><FileText size={16} /> Documentation</a>}
                 {project.demoUrl && <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="p-btn p-btn-ghost"><PlayCircle size={16} /> Demo video</a>}

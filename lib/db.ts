@@ -27,6 +27,7 @@ async function ensureIndexes(db: Db) {
       db.collection("users").createIndex({ email: 1 }, { unique: true }),
       db.collection("users").createIndex({ batchId: 1 }),
       db.collection("projects").createIndex({ slug: 1 }, { unique: true }),
+      db.collection("file_chunks").createIndex({ fileId: 1, n: 1 }, { unique: true }),
     ]);
   } catch (error) {
     // Usually means old duplicate data exists. The app still works; log it so it can be cleaned up.

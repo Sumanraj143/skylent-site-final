@@ -94,8 +94,33 @@ export async function requireUser() {
   return user;
 }
 
+/**
+ * LOCAL TESTING ONLY: with DEV_ADMIN_BYPASS=true in .env.local, /admin opens without signing in.
+ * It never works on Vercel or with `npm start` (both run in production mode).
+ */
+export function isDevAdminBypass() {
+  return process.env.NODE_ENV !== "production" && process.env.DEV_ADMIN_BYPASS === "true";
+}
+
+const DEV_ADMIN = {
+  _id: new ObjectId("000000000000000000000000"),
+  name: "Local admin (test mode)",
+  email: "local-test-mode",
+  role: "admin" as Role,
+  sessionVersion: 0,
+};
+
+/** Admin user, or null. Used by API routes that must not redirect. */
+export async function getAdmin() {
+  const user = await getCurrentUser();
+  if (user?.role === "admin") return user;
+  if (!user && isDevAdminBypass()) return DEV_ADMIN as UserDoc & { role: Role };
+  return null;
+}
+
 export async function requireAdmin() {
+  const admin = await getAdmin();
+  if (admin) return admin;
   const user = await requireUser();
-  if (user.role !== "admin") redirect(homeFor(user.role));
-  return user;
+  redirect(homeFor(user.role));
 }

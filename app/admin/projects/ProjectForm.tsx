@@ -61,22 +61,17 @@ export default function ProjectForm({ project }: { project?: ProjectDoc }) {
         </section>
 
         <section className="p-card">
-          <h2>Files and links</h2>
+          <h2>Extra links <em className="p-help">optional</em></h2>
           <p className="p-help">
-            Upload the zip to Google Drive (Anyone with the link → Viewer) or a GitHub release, and paste the link here.
-            Students never see this link directly — they download through their own login.
+            Project code is not uploaded here. Upload each student’s zip or folder on the <strong>Students</strong> page.
           </p>
           <div className="p-grid-2">
-            <label className="p-field p-span-2">
-              <span>Project zip link</span>
-              <input name="zipUrl" type="url" defaultValue={p?.zipUrl} placeholder="https://drive.google.com/…" />
-            </label>
             <label className="p-field">
-              <span>Documentation link <em>optional</em></span>
+              <span>Documentation link</span>
               <input name="docsUrl" type="url" defaultValue={p?.docsUrl} />
             </label>
             <label className="p-field">
-              <span>Demo video link <em>optional</em></span>
+              <span>Demo video link</span>
               <input name="demoUrl" type="url" defaultValue={p?.demoUrl} />
             </label>
           </div>

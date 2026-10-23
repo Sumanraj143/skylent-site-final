@@ -20,6 +20,16 @@ Learning platform for SKYLENT AI-agent workshops.
    ```
 5. Open http://localhost:3000
 
+## Local test mode (your laptop only)
+
+Add this line to `.env.local` to open `/admin` without signing in while you test:
+
+```
+DEV_ADMIN_BYPASS=true
+```
+
+It only works with `npm run dev`. It is ignored on Vercel and with `npm start`. Never add it in Vercel.
+
 ## Environment variables
 
 | Name | Needed? | What it is |
@@ -50,7 +60,12 @@ Use the **same** `SESSION_SECRET` everywhere you want logins to stay valid.
 
 Students sign in at `/login` and must choose their own password the first time.
 
-## Project zips
+## Student project files
 
-Upload each zip to Google Drive (*Anyone with the link → Viewer*) or a GitHub release, then paste the link in the project.
-Students download through their own login, so the link is never shown on the page.
+On **Admin → Students**, each row has **Upload zip** and **Folder**:
+
+- **Upload zip:** pick a `.zip` from your laptop.
+- **Folder:** pick a project folder. It is zipped in the browser. `node_modules`, `.git`, `venv` and `.env` files are left out automatically (`.env.example` is kept).
+
+Files up to 50 MB are stored in MongoDB. Each student downloads only their own file, from Day 3 of their workshop.
+Uploading again replaces the old file. Deleting a student also deletes their file.

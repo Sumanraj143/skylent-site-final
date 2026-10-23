@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import SubmitButton from "@/components/SubmitButton";
 import BatchForm from "../BatchForm";
 import AddStudentsForm from "../../AddStudentsForm";
-import { autoAssignProjects, deleteBatch, setBatchDay, togglePaid } from "../../actions";
+import { autoAssignProjects, deleteBatch, setBatchDay } from "../../actions";
+import StudentsTable from "../../StudentsTable";
 import { collections, getPlan, toId } from "@/lib/data";
 import { batchStatusLabel, COMPLETED } from "@/lib/workshop";
 
@@ -16,10 +17,9 @@ export default async function BatchDetailPage({ params }: { params: Promise<{ id
 
   const [students, projectList, plan] = await Promise.all([
     users.find({ batchId: id, role: "student" }).sort({ name: 1 }).toArray(),
-    projects.find({}, { projection: { title: 1, status: 1 } }).toArray(),
+    projects.find({}, { projection: { title: 1, status: 1 } }).sort({ title: 1 }).toArray(),
     getPlan(),
   ]);
-  const projectTitle = new Map(projectList.map((p) => [p._id.toString(), p.title]));
   const published = projectList.filter((p) => p.status === "published").length;
   const paid = students.filter((s) => s.paid).length;
   const withoutProject = students.filter((s) => !s.projectId).length;
@@ -97,37 +97,13 @@ export default async function BatchDetailPage({ params }: { params: Promise<{ id
         {withoutProject > 0 && published === 0 && (
           <div className="p-notice">Publish at least one AI project before assigning. <Link className="p-link" href="/admin/projects">Go to AI projects</Link></div>
         )}
-        {students.length === 0 ? (
-          <p className="p-help">No students yet. Add them below.</p>
-        ) : (
-          <div className="p-table-wrap">
-            <table className="p-table">
-              <thead><tr><th>Student</th><th>AI project</th><th>Payment</th><th>Video consent</th><th></th></tr></thead>
-              <tbody>
-                {students.map((s) => (
-                  <tr key={s._id.toString()}>
-                    <td>
-                      <strong>{s.name}</strong>
-                      <div className="p-sub">{s.email}</div>
-                    </td>
-                    <td>{s.projectId ? projectTitle.get(s.projectId.toString()) || "Removed project" : <span className="p-warn">None</span>}</td>
-                    <td>
-                      <form action={togglePaid}>
-                        <input type="hidden" name="id" value={s._id.toString()} />
-                        <input type="hidden" name="paid" value={s.paid ? "false" : "true"} />
-                        <SubmitButton className={`p-pill ${s.paid ? "ok" : ""}`} pendingText="…">
-                          {s.paid ? "Paid" : "Mark paid"}
-                        </SubmitButton>
-                      </form>
-                    </td>
-                    <td>{s.videoConsent ? "Yes" : "Not yet"}</td>
-                    <td><Link href={`/admin/students/${s._id}`} className="p-link">Edit</Link></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+        <StudentsTable
+          students={students}
+          batches={[]}
+          projects={projectList.map((p) => ({ value: p._id.toString(), label: p.title }))}
+          showBatch={false}
+          back={`/admin/batches/${batch._id}`}
+        />
       </section>
 
       <AddStudentsForm batches={[]} fixedBatchId={batch._id.toString()} />

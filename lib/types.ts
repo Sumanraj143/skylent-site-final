@@ -23,6 +23,11 @@ export type UserDoc = {
   videoConsentAt?: Date | null;
   youtubeUrl?: string;
   instagramUrl?: string;
+  // Project files uploaded by the admin for this student
+  fileId?: ObjectId | null;
+  fileName?: string;
+  fileSize?: number;
+  fileUploadedAt?: Date | null;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -67,4 +72,21 @@ export type PlanDay = {
   title: string;
   summary: string;
   items: string[];
+};
+
+export type FileDoc = {
+  _id: ObjectId;
+  studentId: ObjectId;
+  name: string;
+  size: number;
+  chunks: number;
+  status: "uploading" | "ready";
+  createdAt: Date;
+};
+
+export type FileChunkDoc = {
+  _id?: ObjectId;
+  fileId: ObjectId;
+  n: number;
+  data: import("mongodb").Binary;
 };

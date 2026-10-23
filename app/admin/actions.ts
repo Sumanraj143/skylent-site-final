@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { isAdminEmail, requireAdmin } from "@/lib/session";
-import { collections, toId } from "@/lib/data";
+import { collections, deleteStoredFile, toId } from "@/lib/data";
 import { generateTempPassword, getAppUrl, isValidEmail, normalizeEmail } from "@/lib/auth";
 import { escapeHtml, sendEmail } from "@/lib/email";
 import { COMPLETED, lines, parseInterview, safeUrl, slugify } from "@/lib/workshop";
@@ -260,6 +260,34 @@ export async function updateStudent(formData: FormData) {
   );
   revalidatePath("/admin", "layout");
   redirect(`/admin/students/${id}?saved=1`);
+}
+
+/** Permanently delete a student account and their uploaded file. */
+export async function deleteStudent(formData: FormData) {
+  await requireAdmin();
+  const id = toId(formData.get("id"));
+  if (!id) return;
+  const { users, files } = await collections();
+  const student = await users.findOne({ _id: id });
+  if (!student || isAdminEmail(student.email)) return; // never delete an admin
+  const owned = await files.find({ studentId: id }, { projection: { _id: 1 } }).toArray();
+  for (const f of owned) await deleteStoredFile(f._id);
+  await users.deleteOne({ _id: id });
+  revalidatePath("/admin", "layout");
+  const back = String(formData.get("back") ?? "");
+  if (back.startsWith("/admin")) redirect(back);
+}
+
+/** Set a student's workshop / project straight from a table row. */
+export async function quickUpdateStudent(formData: FormData) {
+  await requireAdmin();
+  const id = toId(formData.get("id"));
+  if (!id) return;
+  const field = String(formData.get("field"));
+  if (field !== "batchId" && field !== "projectId") return;
+  const { users } = await collections();
+  await users.updateOne({ _id: id }, { $set: { [field]: toId(formData.get("value")), updatedAt: new Date() } });
+  revalidatePath("/admin", "layout");
 }
 
 export async function togglePaid(formData: FormData) {

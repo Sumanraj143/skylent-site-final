@@ -1,5 +1,5 @@
 import PanelShell from "@/components/PanelShell";
-import { requireAdmin } from "@/lib/session";
+import { isDevAdminBypass, requireAdmin } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +17,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         { href: "/admin/plan", label: "4-day plan" },
       ]}
     >
+      {isDevAdminBypass() && (
+        <div className="p-notice">
+          Local test mode: admin opens without sign-in (DEV_ADMIN_BYPASS=true in .env.local). This never works on the live site.
+        </div>
+      )}
       {children}
     </PanelShell>
   );

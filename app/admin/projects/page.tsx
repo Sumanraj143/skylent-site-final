@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { collections } from "@/lib/data";
+import SubmitButton from "@/components/SubmitButton";
+import { deleteProject } from "../actions";
 
 export default async function ProjectsPage({ searchParams }: { searchParams: Promise<{ q?: string; saved?: string; deleted?: string }> }) {
   const { q = "", saved, deleted } = await searchParams;
@@ -37,19 +39,29 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
       ) : (
         <div className="p-table-wrap p-card">
           <table className="p-table">
-            <thead><tr><th>Project</th><th>Category</th><th>Level</th><th>Files</th><th>Students</th><th>Status</th></tr></thead>
+            <thead><tr><th>#</th><th>Project</th><th>Category</th><th>Level</th><th>Interview Q&amp;A</th><th>Students</th><th>Status</th><th>Actions</th></tr></thead>
             <tbody>
-              {list.map((p) => (
+              {list.map((p, i) => (
                 <tr key={p._id.toString()}>
+                  <td className="p-num">{i + 1}</td>
                   <td>
                     <Link href={`/admin/projects/${p._id}`} className="p-link">{p.title}</Link>
                     {p.summary && <div className="p-sub">{p.summary}</div>}
                   </td>
                   <td>{p.category || "—"}</td>
                   <td>{p.difficulty}</td>
-                  <td>{p.zipUrl ? "Zip ✓" : <span className="p-warn">No zip</span>}{p.interview?.length ? ` · ${p.interview.length} Q&A` : ""}</td>
+                  <td>{p.interview?.length ? p.interview.length : <span className="p-warn">None</span>}</td>
                   <td>{countOf.get(p._id.toString()) || 0}</td>
                   <td><span className={`p-badge ${p.status === "published" ? "ok" : ""}`}>{p.status === "published" ? "Published" : "Draft"}</span></td>
+                  <td>
+                    <div className="p-row-actions">
+                      <Link href={`/admin/projects/${p._id}`} className="p-btn p-btn-ghost p-btn-sm">Edit</Link>
+                      <form action={deleteProject}>
+                        <input type="hidden" name="id" value={p._id.toString()} />
+                        <SubmitButton className="p-btn p-btn-danger p-btn-sm" pendingText="…" confirmText={`Delete “${p.title}”?`}>Delete</SubmitButton>
+                      </form>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>
