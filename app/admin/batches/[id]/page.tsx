@@ -17,7 +17,7 @@ export default async function BatchDetailPage({ params }: { params: Promise<{ id
 
   const [students, projectList, plan] = await Promise.all([
     users.find({ batchId: id, role: "student" }).sort({ name: 1 }).toArray(),
-    projects.find({}, { projection: { title: 1, status: 1 } }).sort({ title: 1 }).toArray(),
+    projects.find({}, { projection: { title: 1, status: 1, fileId: 1 } }).sort({ title: 1 }).toArray(),
     getPlan(),
   ]);
   const published = projectList.filter((p) => p.status === "published").length;
@@ -100,7 +100,7 @@ export default async function BatchDetailPage({ params }: { params: Promise<{ id
         <StudentsTable
           students={students}
           batches={[]}
-          projects={projectList.map((p) => ({ value: p._id.toString(), label: p.title }))}
+          projects={projectList.map((p) => ({ value: p._id.toString(), label: p.fileId ? p.title : `${p.title} (no zip yet)` }))}
           showBatch={false}
           back={`/admin/batches/${batch._id}`}
         />

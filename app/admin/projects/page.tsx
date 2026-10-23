@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { collections } from "@/lib/data";
+import { collections, formatBytes } from "@/lib/data";
+import FileUpload from "@/components/FileUpload";
 import SubmitButton from "@/components/SubmitButton";
 import { deleteProject } from "../actions";
 
@@ -18,7 +19,7 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
       <div className="p-head">
         <div>
           <h1>AI projects</h1>
-          <p>Your library of student AI-agent projects. Aim for one per student in a workshop.</p>
+          <p>Your project library. Upload each project’s zip here, then pick the project for a student on the Students page.</p>
         </div>
         <Link href="/admin/projects/new" className="p-btn p-btn-primary">Add AI project</Link>
       </div>
@@ -39,7 +40,7 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
       ) : (
         <div className="p-table-wrap p-card">
           <table className="p-table">
-            <thead><tr><th>#</th><th>Project</th><th>Category</th><th>Level</th><th>Interview Q&amp;A</th><th>Students</th><th>Status</th><th>Actions</th></tr></thead>
+            <thead><tr><th>#</th><th>Project</th><th>Project zip</th><th>Interview PDF</th><th>Students</th><th>Status</th><th>Actions</th></tr></thead>
             <tbody>
               {list.map((p, i) => (
                 <tr key={p._id.toString()}>
@@ -48,9 +49,21 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
                     <Link href={`/admin/projects/${p._id}`} className="p-link">{p.title}</Link>
                     {p.summary && <div className="p-sub">{p.summary}</div>}
                   </td>
-                  <td>{p.category || "—"}</td>
-                  <td>{p.difficulty}</td>
-                  <td>{p.interview?.length ? p.interview.length : <span className="p-warn">None</span>}</td>
+                                    <td>
+                    <FileUpload
+                      compact
+                      owner={{ kind: "project", id: p._id.toString(), name: p.title }}
+                      file={p.fileId ? { id: p.fileId.toString(), name: p.fileName || "project.zip", size: formatBytes(p.fileSize) } : null}
+                    />
+                  </td>
+                  <td>
+                    <FileUpload
+                      compact
+                      slot="interview"
+                      owner={{ kind: "project", id: p._id.toString(), name: p.title }}
+                      file={p.interviewFileId ? { id: p.interviewFileId.toString(), name: p.interviewFileName || "interview.pdf", size: formatBytes(p.interviewFileSize) } : null}
+                    />
+                  </td>
                   <td>{countOf.get(p._id.toString()) || 0}</td>
                   <td><span className={`p-badge ${p.status === "published" ? "ok" : ""}`}>{p.status === "published" ? "Published" : "Draft"}</span></td>
                   <td>

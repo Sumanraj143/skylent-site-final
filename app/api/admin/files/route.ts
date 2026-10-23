@@ -11,25 +11,31 @@ export async function POST(request: Request) {
   if (!admin) return NextResponse.json({ success: false, message: "Admins only." }, { status: 403 });
 
   const body = await request.json().catch(() => ({}));
-  const studentId = toId(body.studentId);
+  const projectId = toId(body.projectId);
+  const studentId = projectId ? null : toId(body.studentId);
   const name = String(body.name ?? "").trim().slice(0, 150);
   const size = Number(body.size);
+  const slot = body.slot === "interview" && projectId ? "interview" : "zip";
 
-  if (!studentId || !name) return NextResponse.json({ success: false, message: "Student and file are required." }, { status: 400 });
-  if (!name.toLowerCase().endsWith(".zip")) {
-    return NextResponse.json({ success: false, message: "Please upload a .zip file (or choose a folder)." }, { status: 400 });
+  if ((!projectId && !studentId) || !name) return NextResponse.json({ success: false, message: "Project and file are required." }, { status: 400 });
+  const ext = slot === "interview" ? ".pdf" : ".zip";
+  if (!name.toLowerCase().endsWith(ext)) {
+    return NextResponse.json({ success: false, message: `Please upload a ${ext} file.` }, { status: 400 });
   }
   if (!Number.isFinite(size) || size <= 0 || size > MAX_FILE_BYTES) {
     return NextResponse.json({ success: false, message: "The file must be smaller than 50 MB. Remove node_modules / venv folders and try again." }, { status: 400 });
   }
 
-  const { users, files } = await collections();
-  if (!(await users.findOne({ _id: studentId }, { projection: { _id: 1 } }))) {
-    return NextResponse.json({ success: false, message: "Student not found." }, { status: 404 });
-  }
+  const { users, projects, files } = await collections();
+  const owner = projectId
+    ? await projects.findOne({ _id: projectId }, { projection: { _id: 1 } })
+    : await users.findOne({ _id: studentId! }, { projection: { _id: 1 } });
+  if (!owner) return NextResponse.json({ success: false, message: "Not found." }, { status: 404 });
 
   const result = await files.insertOne({
+    projectId,
     studentId,
+    slot,
     name,
     size,
     chunks: Math.ceil(size / CHUNK_BYTES),

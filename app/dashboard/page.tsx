@@ -48,6 +48,13 @@ export default async function StudentDashboard() {
     access.canSeeProject && user.projectId ? projects.findOne({ _id: user.projectId }) : Promise.resolve(null),
   ]);
 
+  // The code to download: the assigned project's zip (or an older file uploaded just for this student).
+  const code = project?.fileId
+    ? { href: `/api/files/${project.fileId}`, name: project.fileName || "project.zip", size: project.fileSize }
+    : user.fileId
+      ? { href: `/api/files/${user.fileId}`, name: user.fileName || "project.zip", size: user.fileSize }
+      : null;
+
   return shell(
     <>
       <div className="p-head">
@@ -102,16 +109,16 @@ export default async function StudentDashboard() {
 
       <section className="p-card s-project">
         <h2>Your AI agent project</h2>
-        {access.canSeeProject && user.fileId && (
+        {access.canSeeProject && code && (
           <div className="s-file">
             <div>
-              <strong>{user.fileName || "project.zip"}</strong>
-              <span className="p-sub">{formatBytes(user.fileSize)} · your own project code</span>
+              <strong>{code.name}</strong>
+              <span className="p-sub">{formatBytes(code.size)} · your project code</span>
             </div>
-            <a href={`/api/files/${user.fileId}`} className="p-btn p-btn-primary"><Download size={16} /> Download your code</a>
+            <a href={code.href} className="p-btn p-btn-primary"><Download size={16} /> Download your code</a>
           </div>
         )}
-        {access.canSeeProject && user.fileId && (
+        {access.canSeeProject && code && (
           <div>
             <h4 className="s-h4">How to run it</h4>
             <ol className="s-steps s-run">
@@ -128,7 +135,7 @@ export default async function StudentDashboard() {
         {!access.canSeeProject ? (
           <p className="s-muted"><Lock size={14} /> Your own project opens on Day 3.</p>
         ) : !project ? (
-          user.fileId ? null : 
+          code ? null : 
           <p className="s-muted">Your project is being assigned. Check back in a few minutes.</p>
         ) : (
           <>
@@ -168,9 +175,18 @@ export default async function StudentDashboard() {
 
       <section className="p-card">
         <h2>Interview stack</h2>
+        {access.canSeeInterview && project?.interviewFileId && (
+          <div className="s-file">
+            <div>
+              <strong>{project.interviewFileName || "interview.pdf"}</strong>
+              <span className="p-sub">{formatBytes(project.interviewFileSize)} · interview questions to prepare</span>
+            </div>
+            <a href={`/api/files/${project.interviewFileId}`} className="p-btn p-btn-primary"><Download size={16} /> Download interview PDF</a>
+          </div>
+        )}
         {!access.canSeeInterview ? (
           <p className="s-muted"><Lock size={14} /> Opens on Day 4, after your seminar.</p>
-        ) : !project?.interview?.length ? (
+        ) : project?.interviewFileId && !project.interview?.length ? null : !project?.interview?.length ? (
           <p className="s-muted">Your interview questions will appear here soon.</p>
         ) : (
           <div className="s-qa">

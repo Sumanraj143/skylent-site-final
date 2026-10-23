@@ -2,9 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import SubmitButton from "@/components/SubmitButton";
 import ResetPassword from "../ResetPassword";
-import StudentFileUpload from "@/components/StudentFileUpload";
 import { deleteStudent, updateStudent } from "../../actions";
-import { collections, formatBytes, toId } from "@/lib/data";
+import { collections, toId } from "@/lib/data";
 
 export default async function StudentDetailPage({
   params,
@@ -88,18 +87,6 @@ export default async function StudentDetailPage({
         </div>
       </form>
 
-      <section className="p-card">
-        <h2>Project files</h2>
-        <p className="p-help">
-          Upload this student’s project as a .zip file. They can download it from Day 3 of their workshop.
-          Tip: delete node_modules / venv folders before zipping to keep it small.
-        </p>
-        <StudentFileUpload
-          studentId={student._id.toString()}
-          studentName={student.name}
-          file={student.fileId ? { id: student.fileId.toString(), name: student.fileName || "project.zip", size: formatBytes(student.fileSize) } : null}
-        />
-      </section>
 
       <ResetPassword id={student._id.toString()} />
 

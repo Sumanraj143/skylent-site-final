@@ -32,7 +32,7 @@ export default async function StudentsPage({
     users.find(filter).sort({ name: 1 }).skip((page - 1) * PAGE_SIZE).limit(PAGE_SIZE).toArray(),
     users.countDocuments(filter),
     batches.find({}, { projection: { name: 1, college: 1 } }).sort({ startDate: -1 }).toArray(),
-    projects.find({}, { projection: { title: 1 } }).sort({ title: 1 }).toArray(),
+    projects.find({}, { projection: { title: 1, fileId: 1 } }).sort({ title: 1 }).toArray(),
   ]);
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const qs = (n: number) => new URLSearchParams({ ...(q && { q }), ...(sp.batch && { batch: sp.batch }), ...(sp.paid && { paid: sp.paid }), page: String(n) }).toString();
@@ -68,7 +68,7 @@ export default async function StudentsPage({
         <StudentsTable
           students={list}
           batches={batchList.map((b) => ({ value: b._id.toString(), label: b.name }))}
-          projects={projectList.map((p) => ({ value: p._id.toString(), label: p.title }))}
+          projects={projectList.map((p) => ({ value: p._id.toString(), label: p.fileId ? p.title : `${p.title} (no zip yet)` }))}
           back={`/admin/students?${qs(page)}`}
         />
         {pages > 1 && (

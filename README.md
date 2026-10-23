@@ -60,12 +60,14 @@ Use the **same** `SESSION_SECRET` everywhere you want logins to stay valid.
 
 Students sign in at `/login` and must choose their own password the first time.
 
-## Student project files
+## Project zips and interview PDFs
 
-On **Admin → Students**, each row has **Upload zip** and **Folder**:
+**Admin → AI projects** is your project library. Each row has two uploads:
 
-- **Upload zip:** pick a `.zip` from your laptop.
-- **Folder:** pick a project folder. It is zipped in the browser. `node_modules`, `.git`, `venv` and `.env` files are left out automatically (`.env.example` is kept).
+- **Project zip:** the code students download (opens on Day 3).
+- **Interview PDF:** interview questions to prepare (opens on Day 4).
 
-Files up to 50 MB are stored in MongoDB. Each student downloads only their own file, from Day 3 of their workshop.
-Uploading again replaces the old file. Deleting a student also deletes their file.
+Then on **Admin → Students**, pick a project for each student from the **AI project** dropdown.
+Each student sees and downloads **only the project assigned to them**.
+
+Files up to 50 MB are stored in MongoDB. Uploading again replaces the old file. Deleting a project also deletes its files.

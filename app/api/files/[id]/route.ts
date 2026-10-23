@@ -20,8 +20,13 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const user = await getCurrentUser();
     if (!user) return NextResponse.redirect(new URL("/login", request.url));
     const batch = user.batchId ? await batches.findOne({ _id: user.batchId }) : null;
-    const owns = user.fileId?.equals(fileId) && user._id.equals(file.studentId);
-    if (!owns || !studentAccess(user, batch).canSeeProject) {
+    const ownFile = Boolean(file.studentId && user._id.equals(file.studentId) && user.fileId?.equals(fileId));
+    const projectFile = Boolean(file.projectId && user.projectId?.equals(file.projectId));
+    const owns = user.role === "student" && (ownFile || projectFile);
+    const access = studentAccess(user, batch);
+    // Code opens on Day 3, the interview PDF on Day 4.
+    const unlocked = file.slot === "interview" ? access.canSeeInterview : access.canSeeProject;
+    if (!owns || !unlocked) {
       return NextResponse.json({ success: false, message: "This file is not unlocked for your account yet." }, { status: 403 });
     }
   }
@@ -45,7 +50,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   const safeName = file.name.replace(/[^\w.\- ]+/g, "_");
   return new Response(stream, {
     headers: {
-      "Content-Type": "application/zip",
+      "Content-Type": file.name.toLowerCase().endsWith(".pdf") ? "application/pdf" : "application/zip",
       "Content-Length": String(file.size),
       "Content-Disposition": `attachment; filename="${safeName}"`,
       "Cache-Control": "private, no-store",

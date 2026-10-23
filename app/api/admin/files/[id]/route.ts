@@ -33,7 +33,7 @@ export async function POST(_request: Request, { params }: Ctx) {
   const fileId = toId((await params).id);
   if (!fileId) return NextResponse.json({ success: false, message: "Bad request." }, { status: 400 });
 
-  const { files, chunks, users } = await collections();
+  const { files, chunks, users, projects } = await collections();
   const file = await files.findOne({ _id: fileId });
   if (!file) return NextResponse.json({ success: false, message: "Upload not found." }, { status: 404 });
 
@@ -42,7 +42,30 @@ export async function POST(_request: Request, { params }: Ctx) {
     return NextResponse.json({ success: false, message: "Some parts of the file are missing. Please upload again." }, { status: 400 });
   }
 
-  const student = await users.findOne({ _id: file.studentId });
+  if (file.projectId) {
+    const project = await projects.findOne({ _id: file.projectId });
+    if (!project) {
+      await deleteStoredFile(fileId);
+      return NextResponse.json({ success: false, message: "Project not found." }, { status: 404 });
+    }
+    await files.updateOne({ _id: fileId }, { $set: { status: "ready" } });
+    const isPdf = file.slot === "interview";
+    const previous = isPdf ? project.interviewFileId : project.fileId;
+    await projects.updateOne(
+      { _id: project._id },
+      {
+        $set: isPdf
+          ? { interviewFileId: fileId, interviewFileName: file.name, interviewFileSize: file.size, updatedAt: new Date() }
+          : { fileId, fileName: file.name, fileSize: file.size, updatedAt: new Date() },
+      }
+    );
+    if (previous && !previous.equals(fileId)) await deleteStoredFile(previous);
+    revalidatePath("/admin", "layout");
+    revalidatePath("/dashboard");
+    return NextResponse.json({ success: true });
+  }
+
+  const student = file.studentId ? await users.findOne({ _id: file.studentId }) : null;
   if (!student) {
     await deleteStoredFile(fileId);
     return NextResponse.json({ success: false, message: "Student not found." }, { status: 404 });
@@ -67,8 +90,10 @@ export async function DELETE(_request: Request, { params }: Ctx) {
   const fileId = toId((await params).id);
   if (!fileId) return NextResponse.json({ success: false, message: "Bad request." }, { status: 400 });
 
-  const { users } = await collections();
+  const { users, projects } = await collections();
   await users.updateMany({ fileId }, { $set: { fileId: null, fileName: "", fileSize: 0, fileUploadedAt: null } });
+  await projects.updateMany({ fileId }, { $set: { fileId: null, fileName: "", fileSize: 0 } });
+  await projects.updateMany({ interviewFileId: fileId }, { $set: { interviewFileId: null, interviewFileName: "", interviewFileSize: 0 } });
   await deleteStoredFile(fileId);
   revalidatePath("/admin", "layout");
   revalidatePath("/dashboard");

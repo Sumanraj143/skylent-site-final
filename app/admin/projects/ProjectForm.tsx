@@ -63,7 +63,7 @@ export default function ProjectForm({ project }: { project?: ProjectDoc }) {
         <section className="p-card">
           <h2>Extra links <em className="p-help">optional</em></h2>
           <p className="p-help">
-            Project code is not uploaded here. Upload each student’s zip or folder on the <strong>Students</strong> page.
+            Upload the project zip from the <strong>AI projects</strong> table (or above, after saving).
           </p>
           <div className="p-grid-2">
             <label className="p-field">

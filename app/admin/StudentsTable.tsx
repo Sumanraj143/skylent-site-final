@@ -1,9 +1,7 @@
 import Link from "next/link";
 import SubmitButton from "@/components/SubmitButton";
 import AutoSubmitSelect from "@/components/AutoSubmitSelect";
-import StudentFileUpload from "@/components/StudentFileUpload";
 import { deleteStudent, quickUpdateStudent, togglePaid } from "./actions";
-import { formatBytes } from "@/lib/data";
 import type { UserDoc } from "@/lib/types";
 
 type Option = { value: string; label: string };
@@ -34,7 +32,6 @@ export default function StudentsTable({
             {showBatch && <th>Workshop</th>}
             <th>AI project</th>
             <th>Payment</th>
-            <th>Project files (zip)</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -70,14 +67,6 @@ export default function StudentsTable({
                     <input type="hidden" name="paid" value={s.paid ? "false" : "true"} />
                     <SubmitButton className={`p-pill ${s.paid ? "ok" : ""}`} pendingText="…">{s.paid ? "Paid ✓" : "Mark paid"}</SubmitButton>
                   </form>
-                </td>
-                <td>
-                  <StudentFileUpload
-                    compact
-                    studentId={id}
-                    studentName={s.name}
-                    file={s.fileId ? { id: s.fileId.toString(), name: s.fileName || "project.zip", size: formatBytes(s.fileSize) } : null}
-                  />
                 </td>
                 <td>
                   <div className="p-row-actions">

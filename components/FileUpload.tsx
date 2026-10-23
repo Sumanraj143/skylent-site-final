@@ -7,28 +7,31 @@ import { Upload, Trash2, Download } from "lucide-react";
 const MAX_BYTES = 50 * 1024 * 1024;
 
 type Props = {
-  studentId: string;
-  studentName: string;
+  /** Upload to a project (normal) or to one student. */
+  owner: { kind: "project" | "student"; id: string; name: string };
+  /** "zip" = project code (default), "interview" = interview questions PDF */
+  slot?: "zip" | "interview";
   file?: { id: string; name: string; size: string } | null;
   compact?: boolean;
 };
 
-/** One "Upload" button: pick a .zip from your laptop and it goes to this student. */
-export default function StudentFileUpload({ studentId, studentName, file, compact = false }: Props) {
+/** One "Upload" button: pick a .zip from your laptop. */
+export default function FileUpload({ owner, slot = "zip", file, compact = false }: Props) {
+  const ext = slot === "interview" ? ".pdf" : ".zip";
   const router = useRouter();
   const input = useRef<HTMLInputElement>(null);
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
 
   async function upload(f: File) {
-    if (!f.name.toLowerCase().endsWith(".zip")) throw new Error("Please choose a .zip file.");
-    if (f.size > MAX_BYTES) throw new Error("File is larger than 50 MB. Remove node_modules / venv and zip again.");
+    if (!f.name.toLowerCase().endsWith(ext)) throw new Error(`Please choose a ${ext} file.`);
+    if (f.size > MAX_BYTES) throw new Error("File is larger than 50 MB.");
 
     setStatus("Starting…");
     const start = await fetch("/api/admin/files", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ studentId, name: f.name, size: f.size }),
+      body: JSON.stringify({ [owner.kind === "project" ? "projectId" : "studentId"]: owner.id, slot, name: f.name, size: f.size }),
     }).then((r) => r.json());
     if (!start.success) throw new Error(start.message);
 
@@ -61,7 +64,7 @@ export default function StudentFileUpload({ studentId, studentName, file, compac
   }
 
   async function remove() {
-    if (!file || !window.confirm(`Remove “${file.name}” from ${studentName}?`)) return;
+    if (!file || !window.confirm(`Remove “${file.name}” from ${owner.name}?`)) return;
     setBusy(true);
     await fetch(`/api/admin/files/${file.id}`, { method: "DELETE" });
     setBusy(false);
@@ -77,7 +80,7 @@ export default function StudentFileUpload({ studentId, studentName, file, compac
             <Download size={14} /> {file.name}
           </a>
           <span className="p-sub">{file.size}</span>
-          <button type="button" className="p-icon-btn" onClick={remove} disabled={busy} aria-label={`Remove file from ${studentName}`}>
+          <button type="button" className="p-icon-btn" onClick={remove} disabled={busy} aria-label={`Remove file from ${owner.name}`}>
             <Trash2 size={14} />
           </button>
         </div>
@@ -87,7 +90,13 @@ export default function StudentFileUpload({ studentId, studentName, file, compac
           <Upload size={14} /> {file ? "Replace" : "Upload"}
         </button>
       </div>
-      <input ref={input} type="file" accept=".zip,application/zip,application/x-zip-compressed" hidden onChange={onPick} />
+      <input
+        ref={input}
+        type="file"
+        accept={slot === "interview" ? ".pdf,application/pdf" : ".zip,application/zip,application/x-zip-compressed"}
+        hidden
+        onChange={onPick}
+      />
       {status && <div className="p-upload-status" role="status">{status}</div>}
     </div>
   );

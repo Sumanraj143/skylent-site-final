@@ -50,6 +50,14 @@ export type ProjectDoc = {
   demoUrl: string;
   interview: InterviewQA[];
   seminarTips: string;
+  // The project's code zip, uploaded by the admin
+  fileId?: ObjectId | null;
+  fileName?: string;
+  fileSize?: number;
+  // Interview questions as a PDF
+  interviewFileId?: ObjectId | null;
+  interviewFileName?: string;
+  interviewFileSize?: number;
   status: "draft" | "published";
   createdAt: Date;
   updatedAt: Date;
@@ -76,7 +84,11 @@ export type PlanDay = {
 
 export type FileDoc = {
   _id: ObjectId;
-  studentId: ObjectId;
+  /** A file belongs to a project (normal) or to one student (older uploads). */
+  projectId?: ObjectId | null;
+  studentId?: ObjectId | null;
+  /** "zip" = project code, "interview" = interview questions PDF */
+  slot?: "zip" | "interview";
   name: string;
   size: number;
   chunks: number;

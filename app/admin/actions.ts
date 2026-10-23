@@ -59,7 +59,10 @@ export async function deleteProject(formData: FormData) {
   const id = toId(formData.get("id"));
   if (!id) return;
   const { projects, users } = await collections();
+  const project = await projects.findOne({ _id: id });
   await users.updateMany({ projectId: id }, { $set: { projectId: null } });
+  if (project?.fileId) await deleteStoredFile(project.fileId);
+  if (project?.interviewFileId) await deleteStoredFile(project.interviewFileId);
   await projects.deleteOne({ _id: id });
   revalidatePath("/admin", "layout");
   redirect("/admin/projects?deleted=1");
